@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>iPhone Love 💌</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: radial-gradient(circle, #0a0a12, #000);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        /* BUTTON */
+        
+        button {
+            padding: 12px 25px;
+            font-size: 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #ff99cc;
+            color: #ff99cc;
+            border-radius: 14px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+        /* HEART (iPhone style emoji) */
+        
+        .heart {
+            font-size: 110px;
+            opacity: 0;
+            transform: scale(0.3);
+            transition: 1s ease;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 25px rgba(255, 105, 180, 0.6));
+        }
+        
+        .show {
+            opacity: 1;
+            transform: scale(1);
+            animation: iosPop 1.2s cubic-bezier(.2, .9, .3, 1), beat 1.4s infinite ease-in-out;
+        }
+        
+        @keyframes iosPop {
+            0% {
+                transform: scale(0.3);
+            }
+            60% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes beat {
+            0% {
+                transform: scale(1);
+            }
+            40% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        /* IMAGE */
+        
+        img {
+            width: 240px;
+            border-radius: 20px;
+            margin-top: 20px;
+            opacity: 0;
+            transform: scale(0);
+            transition: 1.2s ease;
+            box-shadow: 0 0 30px rgba(255, 77, 157, 0.6);
+        }
+        
+        .showImg {
+            opacity: 1;
+            transform: scale(1);
+        }
+        /* FLOAT */
+        
+        .float {
+            position: absolute;
+            font-size: 22px;
+            animation: rise 3s linear forwards;
+        }
+        
+        @keyframes rise {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-300px);
+                opacity: 0;
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- STEP 1 -->
+    <div id="step1">
+        <div id="heart" class="heart">🫶</div>
+        <button onclick="step1()">эхлэх</button>
+    </div>
+
+    <!-- STEP 2 -->
+    <div id="step2" class="hidden">
+        <button onclick="step2()">энд дараарай хөөрхнөө</button>
+    </div>
+
+    <!-- STEP 3 -->
+    <div id="step3" class="hidden">
+        <img id="photo" src="yuor.jpg">
+
+        <audio id="music" loop>
+    <source src="love.mp3" type="audio/mpeg">
+  </audio>
+    </div>
+
+    <script>
+        // STEP 1
+        function step1() {
+
+            document.getElementById("heart").classList.add("show");
+
+            // floating emojis
+            setInterval(() => {
+                let e = document.createElement("div");
+                e.className = "float";
+
+                let emojis = ["🫶", "🩷", "💗", "✨"];
+                e.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+
+                e.style.left = Math.random() * window.innerWidth + "px";
+                e.style.top = window.innerHeight + "px";
+
+                document.body.appendChild(e);
+                setTimeout(() => e.remove(), 3000);
+
+            }, 300);
+
+            // show next button
+            setTimeout(() => {
+                document.getElementById("step1").classList.add("hidden");
+                document.getElementById("step2").classList.remove("hidden");
+            }, 3000);
+        }
+
+
+        // STEP 2
+        function step2() {
+            document.getElementById("step2").classList.add("hidden");
+            document.getElementById("step3").classList.remove("hidden");
+
+            document.getElementById("photo").classList.add("showImg");
+
+            document.getElementById("music").play();
+        }
+    </script>
+
+</body>
+
+</html>
