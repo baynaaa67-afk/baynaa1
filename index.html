@@ -19,14 +19,12 @@
             background: radial-gradient(circle at top, #2a0040, #000);
             color: white;
         }
-        /* CANVAS */
         
         canvas {
             position: fixed;
             inset: 0;
             z-index: 0;
         }
-        /* SCENES */
         
         .scene {
             position: fixed;
@@ -40,7 +38,6 @@
         .hidden {
             display: none
         }
-        /* CARD */
         
         .card {
             background: rgba(255, 255, 255, 0.08);
@@ -51,7 +48,6 @@
             width: 320px;
             box-shadow: 0 0 60px rgba(255, 105, 180, 0.25);
         }
-        /* BUTTON */
         
         button {
             padding: 12px 18px;
@@ -81,7 +77,6 @@
             background: #0a84ff;
             color: white
         }
-        /* CAKE */
         
         .cake {
             font-size: 90px;
@@ -97,17 +92,6 @@
                 transform: translateY(-12px)
             }
         }
-        /* IMAGE */
-        
-        #img {
-            width: 85px;
-            height: 85px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid white;
-            margin-top: 10px;
-        }
-        /* WISH */
         
         #wish {
             position: fixed;
@@ -135,12 +119,10 @@
         <div class="card">
             <h1>🎂 Төрсөн өдрийн мэнд хүргэе 🎉</h1>
 
-            <input type="file" id="file" accept="image/*">
+            <p>Үүнийг харах уу?</p>
 
-            <p>Үүнийг харах уу? </p>
-
-            <button id="yes" onclick="go()">Тийм </button>
-            <button id="no" onmouseover="run()">Үгүй </button>
+            <button id="yes" onclick="go()">Тийм</button>
+            <button id="no" onmouseover="run()">Үгүй</button>
         </div>
     </div>
 
@@ -157,8 +139,6 @@
         <div class="card">
             <div class="cake">🎂</div>
 
-            <img id="img" />
-
             <h1>✨ Хүслээ бодоорой ✨</h1>
 
             <button onclick="blow()">🕯️ Лаагаа үлээх</button>
@@ -167,25 +147,15 @@
 
     <!-- WISH -->
     <div id="wish">
-        💖 “Чиний хүсэл биелэх болтугай. Мөрөөдөлдөө заавал хүрээрэй. Амжилт”... ✨
+        💖 “Чиний хүсэл биелэх болтугай. Мөрөөдөлдөө заавал хүрээрэй. Амжилт” ✨
     </div>
 
     <script>
-        /* MUSIC */
         const music = document.getElementById("music");
-
-        /* IMAGE */
-        let imgData = "";
-        document.getElementById("file").addEventListener("change", e => {
-            const r = new FileReader();
-            r.onload = () => imgData = r.result;
-            r.readAsDataURL(e.target.files[0]);
-        });
 
         /* FLOW */
         function go() {
             music.play().catch(() => {});
-
             document.getElementById("s1").classList.add("hidden");
             document.getElementById("s2").classList.remove("hidden");
         }
@@ -193,18 +163,12 @@
         function cake() {
             document.getElementById("s2").classList.add("hidden");
             document.getElementById("s3").classList.remove("hidden");
-
-            if (imgData) {
-                document.getElementById("img").src = imgData;
-            }
-
             spawn();
         }
 
-        /* NO BUTTON (close runaway) */
+        /* NO BUTTON */
         function run() {
             const b = document.getElementById("no");
-
             b.style.position = "fixed";
 
             let x = b.offsetLeft + (Math.random() * 200 - 100);
@@ -215,11 +179,9 @@
 
             b.style.left = x + "px";
             b.style.top = y + "px";
-
-            b.style.transition = "0.15s";
         }
 
-        /* WISH EFFECT */
+        /* WISH */
         function blow() {
             const w = document.getElementById("wish");
             w.style.display = "flex";
@@ -228,14 +190,11 @@
             document.body.style.background = "#fff";
 
             setTimeout(() => {
-                document.body.style.background = "radial-gradient(circle at top,#2a0040,#000)";
+                document.body.style.background =
+                    "radial-gradient(circle at top,#2a0040,#000)";
             }, 200);
 
             spawn();
-
-            for (let i = 0; i < 80; i++) {
-                p.push(new Particle());
-            }
 
             setTimeout(() => {
                 w.style.display = "none";
@@ -267,7 +226,6 @@
             }
         }
 
-        /* ANIMATE */
         function anim() {
             ctx.fillStyle = "rgba(0,0,0,0.25)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
