@@ -1,175 +1,301 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="mn">
 
 <head>
-    <meta charset="UTF-8">
-    <title>iPhone Love 💌</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎂 Төрсөн өдрийн бэлэг</title>
 
     <style>
+        * {
+            box-sizing: border-box
+        }
+        
         body {
             margin: 0;
-            background: radial-gradient(circle, #0a0a12, #000);
+            height: 100vh;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI";
+            background: radial-gradient(circle at top, #2a0040, #000);
+            color: white;
+        }
+        /* CANVAS */
+        
+        canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
+        /* SCENES */
+        
+        .scene {
+            position: fixed;
+            inset: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            flex-direction: column;
-            overflow: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            z-index: 2;
+        }
+        
+        .hidden {
+            display: none
+        }
+        /* CARD */
+        
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(18px);
+            padding: 30px;
+            border-radius: 24px;
+            text-align: center;
+            width: 320px;
+            box-shadow: 0 0 60px rgba(255, 105, 180, 0.25);
         }
         /* BUTTON */
         
         button {
-            padding: 12px 25px;
-            font-size: 18px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid #ff99cc;
-            color: #ff99cc;
+            padding: 12px 18px;
+            border: none;
             border-radius: 14px;
             cursor: pointer;
-            backdrop-filter: blur(10px);
-        }
-        /* HEART (iPhone style emoji) */
-        
-        .heart {
-            font-size: 110px;
-            opacity: 0;
-            transform: scale(0.3);
-            transition: 1s ease;
-            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 25px rgba(255, 105, 180, 0.6));
+            margin: 6px;
+            transition: .2s;
         }
         
-        .show {
-            opacity: 1;
-            transform: scale(1);
-            animation: iosPop 1.2s cubic-bezier(.2, .9, .3, 1), beat 1.4s infinite ease-in-out;
+        button:hover {
+            transform: scale(1.05)
         }
         
-        @keyframes iosPop {
-            0% {
-                transform: scale(0.3);
-            }
-            60% {
-                transform: scale(1.2);
-            }
+        #yes {
+            background: #34c759;
+            color: white
+        }
+        
+        #no {
+            background: #ff3b30;
+            color: white;
+            position: absolute
+        }
+        
+        #next {
+            background: #0a84ff;
+            color: white
+        }
+        /* CAKE */
+        
+        .cake {
+            font-size: 90px;
+            animation: float 2s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%,
             100% {
-                transform: scale(1);
+                transform: translateY(0)
             }
-        }
-        
-        @keyframes beat {
-            0% {
-                transform: scale(1);
-            }
-            40% {
-                transform: scale(1.1);
-            }
-            100% {
-                transform: scale(1);
+            50% {
+                transform: translateY(-12px)
             }
         }
         /* IMAGE */
         
-        img {
-            width: 240px;
-            border-radius: 20px;
-            margin-top: 20px;
-            opacity: 0;
-            transform: scale(0);
-            transition: 1.2s ease;
-            box-shadow: 0 0 30px rgba(255, 77, 157, 0.6);
+        #img {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            margin-top: 10px;
         }
+        /* WISH */
         
-        .showImg {
-            opacity: 1;
-            transform: scale(1);
-        }
-        /* FLOAT */
-        
-        .float {
-            position: absolute;
-            font-size: 22px;
-            animation: rise 3s linear forwards;
-        }
-        
-        @keyframes rise {
-            0% {
-                transform: translateY(0);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-300px);
-                opacity: 0;
-            }
-        }
-        
-        .hidden {
+        #wish {
+            position: fixed;
+            inset: 0;
             display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            font-size: 22px;
+            text-align: center;
         }
     </style>
 </head>
 
 <body>
 
+    <canvas id="c"></canvas>
+
+    <audio id="music" src="music.mp3.mp4"></audio>
+
     <!-- STEP 1 -->
-    <div id="step1">
-        <div id="heart" class="heart">🫶</div>
-        <button onclick="step1()">эхлэх</button>
+    <div class="scene" id="s1">
+        <div class="card">
+            <h1>🎂 Төрсөн өдрийн мэнд хүргэе 🎉</h1>
+
+            <input type="file" id="file" accept="image/*">
+
+            <p>Үүнийг харах уу? </p>
+
+            <button id="yes" onclick="go()">Тийм </button>
+            <button id="no" onmouseover="run()">Үгүй </button>
+        </div>
     </div>
 
     <!-- STEP 2 -->
-    <div id="step2" class="hidden">
-        <button onclick="step2()">энд дараарай </button>
+    <div class="scene hidden" id="s2">
+        <div class="card">
+            <h1>🎁 Нууц бэлэг нээгдлээ!</h1>
+            <button id="next" onclick="cake()">Нээх 🎂</button>
+        </div>
     </div>
 
-    <!-- STEP 3 -->
-    <div id="step3" class="hidden">
-        <img id="photo" src="your.jpg">
+    <!-- CAKE -->
+    <div class="scene hidden" id="s3">
+        <div class="card">
+            <div class="cake">🎂</div>
 
-        <audio id="music" loop>
-    <source src="love.mp3.mp4" type="audio/mpeg">
-  </audio>
+            <img id="img" />
+
+            <h1>✨ Хүслээ бодоорой ✨</h1>
+
+            <button onclick="blow()">🕯️ Лаагаа үлээх</button>
+        </div>
+    </div>
+
+    <!-- WISH -->
+    <div id="wish">
+        💖 “Чиний хүсэл биелэх болтугай. Мөрөөдөлдөө заавал хүрээрэй. Амжилт”... ✨
     </div>
 
     <script>
-        // STEP 1
-        function step1() {
+        /* MUSIC */
+        const music = document.getElementById("music");
 
-            document.getElementById("heart").classList.add("show");
+        /* IMAGE */
+        let imgData = "";
+        document.getElementById("file").addEventListener("change", e => {
+            const r = new FileReader();
+            r.onload = () => imgData = r.result;
+            r.readAsDataURL(e.target.files[0]);
+        });
 
-            // floating emojis
-            setInterval(() => {
-                let e = document.createElement("div");
-                e.className = "float";
+        /* FLOW */
+        function go() {
+            music.play().catch(() => {});
 
-                let emojis = ["🫶", "🩷", "💗", "✨"];
-                e.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+            document.getElementById("s1").classList.add("hidden");
+            document.getElementById("s2").classList.remove("hidden");
+        }
 
-                e.style.left = Math.random() * window.innerWidth + "px";
-                e.style.top = window.innerHeight + "px";
+        function cake() {
+            document.getElementById("s2").classList.add("hidden");
+            document.getElementById("s3").classList.remove("hidden");
 
-                document.body.appendChild(e);
-                setTimeout(() => e.remove(), 3000);
+            if (imgData) {
+                document.getElementById("img").src = imgData;
+            }
 
-            }, 300);
+            spawn();
+        }
 
-            // show next button
+        /* NO BUTTON (close runaway) */
+        function run() {
+            const b = document.getElementById("no");
+
+            b.style.position = "fixed";
+
+            let x = b.offsetLeft + (Math.random() * 200 - 100);
+            let y = b.offsetTop + (Math.random() * 200 - 100);
+
+            x = Math.max(20, Math.min(window.innerWidth - 80, x));
+            y = Math.max(20, Math.min(window.innerHeight - 50, y));
+
+            b.style.left = x + "px";
+            b.style.top = y + "px";
+
+            b.style.transition = "0.15s";
+        }
+
+        /* WISH EFFECT */
+        function blow() {
+            const w = document.getElementById("wish");
+            w.style.display = "flex";
+
+            document.body.style.transition = "0.2s";
+            document.body.style.background = "#fff";
+
             setTimeout(() => {
-                document.getElementById("step1").classList.add("hidden");
-                document.getElementById("step2").classList.remove("hidden");
+                document.body.style.background = "radial-gradient(circle at top,#2a0040,#000)";
+            }, 200);
+
+            spawn();
+
+            for (let i = 0; i < 80; i++) {
+                p.push(new Particle());
+            }
+
+            setTimeout(() => {
+                w.style.display = "none";
             }, 3000);
         }
 
+        /* PARTICLES */
+        const canvas = document.getElementById("c");
+        const ctx = canvas.getContext("2d");
 
-        // STEP 2
-        function step2() {
-            document.getElementById("step2").classList.add("hidden");
-            document.getElementById("step3").classList.remove("hidden");
+        canvas.width = innerWidth;
+        canvas.height = innerHeight;
 
-            document.getElementById("photo").classList.add("showImg");
+        let p = [];
 
-            document.getElementById("music").play();
+        function Particle() {
+            this.x = Math.random() * canvas.width;
+            this.y = -10;
+            this.vx = (Math.random() - 0.5) * 3;
+            this.vy = Math.random() * 3 + 2;
+            this.r = Math.random() * 5 + 2;
+            this.a = 1;
+            this.c = `hsl(${Math.random()*360},100%,60%)`;
         }
+
+        function spawn() {
+            for (let i = 0; i < 120; i++) {
+                p.push(new Particle());
+            }
+        }
+
+        /* ANIMATE */
+        function anim() {
+            ctx.fillStyle = "rgba(0,0,0,0.25)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            p.forEach((e, i) => {
+                e.x += e.vx;
+                e.y += e.vy;
+                e.a -= 0.01;
+
+                ctx.globalAlpha = e.a;
+                ctx.fillStyle = e.c;
+
+                ctx.beginPath();
+                ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (e.a <= 0) p.splice(i, 1);
+            });
+
+            requestAnimationFrame(anim);
+        }
+
+        anim();
+
+        window.addEventListener("resize", () => {
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+        });
     </script>
 
 </body>
