@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="mn">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎂 Төрсөн өдрийн бэлэг</title>
+
+    <style>
+        * {
+            box-sizing: border-box
+        }
+        
+        body {
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI";
+            background: radial-gradient(circle at top, #2a0040, #000);
+            color: white;
+        }
+        /* CANVAS */
+        
+        canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
+        /* SCENES */
+        
+        .scene {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+        
+        .hidden {
+            display: none
+        }
+        /* CARD */
+        
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(18px);
+            padding: 30px;
+            border-radius: 24px;
+            text-align: center;
+            width: 320px;
+            box-shadow: 0 0 60px rgba(255, 105, 180, 0.25);
+        }
+        /* BUTTON */
+        
+        button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            margin: 6px;
+            transition: .2s;
+        }
+        
+        button:hover {
+            transform: scale(1.05)
+        }
+        
+        #yes {
+            background: #34c759;
+            color: white
+        }
+        
+        #no {
+            background: #ff3b30;
+            color: white;
+            position: absolute
+        }
+        
+        #next {
+            background: #0a84ff;
+            color: white
+        }
+        /* CAKE */
+        
+        .cake {
+            font-size: 90px;
+            animation: float 2s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+            50% {
+                transform: translateY(-12px)
+            }
+        }
+        /* IMAGE */
+        
+        #img {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            margin-top: 10px;
+        }
+        /* WISH */
+        
+        #wish {
+            position: fixed;
+            inset: 0;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            font-size: 22px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="c"></canvas>
+
+    <audio id="music" src="music.mp3.mp4"></audio>
+
+    <!-- STEP 1 -->
+    <div class="scene" id="s1">
+        <div class="card">
+            <h1>🎂 Төрсөн өдрийн мэнд хүргэе 🎉</h1>
+
+            <input type="file" id="file" accept="image/*">
+
+            <p>Үүнийг харах уу? </p>
+
+            <button id="yes" onclick="go()">Тийм </button>
+            <button id="no" onmouseover="run()">Үгүй </button>
+        </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="scene hidden" id="s2">
+        <div class="card">
+            <h1>🎁 Нууц бэлэг нээгдлээ!</h1>
+            <button id="next" onclick="cake()">Нээх 🎂</button>
+        </div>
+    </div>
+
+    <!-- CAKE -->
+    <div class="scene hidden" id="s3">
+        <div class="card">
+            <div class="cake">🎂</div>
+
+            <img id="img" />
+
+            <h1>✨ Хүслээ бодоорой ✨</h1>
+
+            <button onclick="blow()">🕯️ Лаагаа үлээх</button>
+        </div>
+    </div>
+
+    <!-- WISH -->
+    <div id="wish">
+        💖 “Чиний хүсэл биелэх болтугай. Мөрөөдөлдөө заавал хүрээрэй. Амжилт”... ✨
+    </div>
+
+    <script>
+        /* MUSIC */
+        const music = document.getElementById("music");
+
+        /* IMAGE */
+        let imgData = "";
+        document.getElementById("file").addEventListener("change", e => {
+            const r = new FileReader();
+            r.onload = () => imgData = r.result;
+            r.readAsDataURL(e.target.files[0]);
+        });
+
+        /* FLOW */
+        function go() {
+            music.play().catch(() => {});
+
+            document.getElementById("s1").classList.add("hidden");
+            document.getElementById("s2").classList.remove("hidden");
+        }
+
+        function cake() {
+            document.getElementById("s2").classList.add("hidden");
+            document.getElementById("s3").classList.remove("hidden");
+
+            if (imgData) {
+                document.getElementById("img").src = imgData;
+            }
+
+            spawn();
+        }
+
+        /* NO BUTTON (close runaway) */
+        function run() {
+            const b = document.getElementById("no");
+
+            b.style.position = "fixed";
+
+            let x = b.offsetLeft + (Math.random() * 200 - 100);
+            let y = b.offsetTop + (Math.random() * 200 - 100);
+
+            x = Math.max(20, Math.min(window.innerWidth - 80, x));
+            y = Math.max(20, Math.min(window.innerHeight - 50, y));
+
+            b.style.left = x + "px";
+            b.style.top = y + "px";
+
+            b.style.transition = "0.15s";
+        }
+
+        /* WISH EFFECT */
+        function blow() {
+            const w = document.getElementById("wish");
+            w.style.display = "flex";
+
+            document.body.style.transition = "0.2s";
+            document.body.style.background = "#fff";
+
+            setTimeout(() => {
+                document.body.style.background = "radial-gradient(circle at top,#2a0040,#000)";
+            }, 200);
+
+            spawn();
+
+            for (let i = 0; i < 80; i++) {
+                p.push(new Particle());
+            }
+
+            setTimeout(() => {
+                w.style.display = "none";
+            }, 3000);
+        }
+
+        /* PARTICLES */
+        const canvas = document.getElementById("c");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = innerWidth;
+        canvas.height = innerHeight;
+
+        let p = [];
+
+        function Particle() {
+            this.x = Math.random() * canvas.width;
+            this.y = -10;
+            this.vx = (Math.random() - 0.5) * 3;
+            this.vy = Math.random() * 3 + 2;
+            this.r = Math.random() * 5 + 2;
+            this.a = 1;
+            this.c = `hsl(${Math.random()*360},100%,60%)`;
+        }
+
+        function spawn() {
+            for (let i = 0; i < 120; i++) {
+                p.push(new Particle());
+            }
+        }
+
+        /* ANIMATE */
+        function anim() {
+            ctx.fillStyle = "rgba(0,0,0,0.25)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            p.forEach((e, i) => {
+                e.x += e.vx;
+                e.y += e.vy;
+                e.a -= 0.01;
+
+                ctx.globalAlpha = e.a;
+                ctx.fillStyle = e.c;
+
+                ctx.beginPath();
+                ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (e.a <= 0) p.splice(i, 1);
+            });
+
+            requestAnimationFrame(anim);
+        }
+
+        anim();
+
+        window.addEventListener("resize", () => {
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+        });
+    </script>
+
+</body>
+
+</html>
